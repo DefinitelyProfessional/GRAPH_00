@@ -7,25 +7,15 @@ ROOT_DIR = Path(__file__).resolve().parents[1] # 0:src, 1:GRAPH_00
 RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
 # external py files to decentralize definitions
-from csv_handling import read_relations
-from algorithms import optimized_dijkstra
+from csv_handling import prepare_adj_list
+from algorithms import routing_engine
 
-# read the relations and initialize teh graph_environment
-graph_environment = read_relations(RELATIONS_FILE_PATH)
+# read the relations and initialize the ADJ_list
+name_to_id, id_to_name, ADJ_list = prepare_adj_list(RELATIONS_FILE_PATH)
 
 # --- Demo Execution ---
 if __name__ == "__main__":
-    pass
-    # # Your mock CSV data (src, dst, weight)
-    # edges = [
-    #     ("Jakarta", "Bekasi", 20),
-    #     ("Jakarta", "Depok", 15),
-    #     ("Bekasi", "Cikarang", 25),
-    #     ("Depok", "Cikarang", 30),
-    #     ("Cikarang", "Bandung", 60),
-    #     ("Bekasi", "Bogor", 40) # A dead end for fun
-    # ]
-    
-    # dist, route = run_routing_engine(edges, "Jakarta", "Bandung")
-    # print(f"Total Distance: {dist}")
-    # print(f"Optimal Route: {' -> '.join(route)}")
+    print(name_to_id.keys())
+    start_node = input("Start : ")
+    end_node = input("End : ")
+    routing_engine(ADJ_list, name_to_id, id_to_name, start_node, end_node)

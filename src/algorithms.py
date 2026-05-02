@@ -66,43 +66,25 @@ def optimized_dijkstra(graph, start_node, end_node):
 # Translation Layer (For your CSV Data)
 # ==========================================
 
-def run_routing_engine(csv_edges, start_name, end_name):
-    """
-    Translates human-readable strings to integers, builds the optimized graph,
-    runs the engine, and translates the results back.
-    """
-    # 1. Discover unique nodes and build translation maps
-    unique_nodes = set()
-    for src, dst, _ in csv_edges:
-        unique_nodes.add(src)
-        unique_nodes.add(dst)
-        
-    name_to_id = {name: idx for idx, name in enumerate(unique_nodes)}
-    id_to_name = {idx: name for name, idx in name_to_id.items()}
-    
-    # 2. Build the optimized List of Lists graph
-    num_nodes = len(unique_nodes)
-    graph = [[] for _ in range(num_nodes)]
-    
-    for src, dst, weight in csv_edges:
-        src_id = name_to_id[src]
-        dst_id = name_to_id[dst]
-        graph[src_id].append((dst_id, weight))
-        
+def routing_engine(ADJ_list, name_to_id, id_to_name, start_node, end_node):
     # 3. Check if user input is valid
-    if start_name not in name_to_id or end_name not in name_to_id:
+    if start_node not in name_to_id or end_node not in name_to_id:
         return "Invalid start or end node."
         
     # 4. Run the Engine!
-    start_id = name_to_id[start_name]
-    end_id = name_to_id[end_name]
+    start_id = name_to_id[start_node]
+    end_id = name_to_id[end_node]
     
-    total_distance, path_ids = optimized_dijkstra(graph, start_id, end_id)
+    total_distance, path_ids = optimized_dijkstra(ADJ_list, start_id, end_id)
     
     # 5. Translate results back to human-readable strings
     if total_distance == INF:
-        return f"No path found between {start_name} and {end_name}."
+        return f"No path found between {start_node} and {end_node}."
         
     path_names = [id_to_name[node_id] for node_id in path_ids]
     
     return total_distance, path_names
+
+# --- Demo Execution ---
+if __name__ == "__main__":
+    pass
