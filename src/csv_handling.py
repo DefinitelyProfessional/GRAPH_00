@@ -46,13 +46,14 @@ def display_adjacency_list(id_to_name, ADJ_list):
         print()
 
 # ========================================================================================================
-def generate_relations_csv(relations_path: str, num_nodes=10, num_edges=20, min_weight=1, max_weight=100):
+def generate_relations_csv(relations_path: str, directional=True, num_nodes=10, num_edges=20, min_weight=1, max_weight=100):
     """
     # Self explanatory ahh function.
     random and exactly the specified amount of nodes & edges.
     """
     # The max possible edges in a directed graph is V * (V - 1) that "-1" being no self loops allowed
-    max_possible_edges = num_nodes * (num_nodes - 1)
+    # As for a bidirectional graph it would be half of a directional graph cuz of going in 2 ways.
+    max_possible_edges = num_nodes * (num_nodes - 1) if directional else (num_nodes * (num_nodes - 1)) // 2
     if num_edges > max_possible_edges: num_edges = max_possible_edges
 
     # Generate the list of nodes name (0='A', 25='Z', 26='AA', ...)
@@ -69,17 +70,28 @@ def generate_relations_csv(relations_path: str, num_nodes=10, num_edges=20, min_
     while len(edges) < num_edges:
         src_idx = random.randint(0, num_nodes - 1)
         dst_idx = random.randint(0, num_nodes - 1)
-        # Ensure no self loops(!=) and no dupes(not in) // edges first, weights later
-        if src_idx != dst_idx and (src_idx, dst_idx) not in edges: edges.add((src_idx, dst_idx))
+        if src_idx == dst_idx: continue # Skip self-loops
+        # For bidirectional, (A, B) is the same as (B, A)
+        # A clever way to go around that is to ensure A n B is sorted
+        if not directional: edge_key = tuple(sorted((src_idx, dst_idx)))
+        else: edge_key = (src_idx, dst_idx)
+        # Ensure no dupes exist
+        if edge_key not in edges: edges.add(edge_key)
 
     try: # WRITE TO CSV WHILE ALSO GENERATING THE WEIGHTS   
         with relations_path.open('w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file) # simple writer
             writer.writerow(["src", "dst", "wgh"]) # the esteemed header
-            writer.writerows( # they say this generator is more efficient
-                (nodes[src_id], nodes[dst_id], float(random.randint(min_weight, max_weight)))
-                for src_id, dst_id in edges
-            )
+            if directional:
+                writer.writerows( # they say this generator is more efficient
+                    (nodes[src_id], nodes[dst_id], float(random.randint(min_weight, max_weight)))
+                    for src_id, dst_id in edges
+                )
+            else:
+                for src_id, dst_id in edges:
+                    wgh = float(random.randint(min_weight, max_weight))
+                    writer.writerow((nodes[src_id], nodes[dst_id], wgh))
+                    writer.writerow((nodes[dst_id], nodes[src_id], wgh))
     except Exception as cursed: print(cursed)
 
 
@@ -92,4 +104,4 @@ if __name__ == "__main__":
     RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
     if input("Generate random relations ? (y/n)") in "Yy":
-        generate_relations_csv(RELATIONS_FILE_PATH, num_nodes=26**2, num_edges=1000, min_weight=1, max_weight=50)
+        generate_relations_csv(RELATIONS_FILE_PATH, directional=False, num_nodes=26**2, num_edges=1000, min_weight=1, max_weight=50)
