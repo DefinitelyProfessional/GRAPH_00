@@ -19,13 +19,13 @@ class GRAPHLOADER:
         """
         nodes = set()
         edges = set()
-        try: # READ THE CSV
-            with open(self.relations_path, mode='r', newline='', encoding='utf-8') as file:
-                reader = csv.reader(file); next(reader) # unused header
-                for src, dst, wgh in reader:
-                    nodes.add(src); nodes.add(dst) # collect the unique nodes
-                    edges.add((src, dst, float(wgh))) # store the  unique edges 
-        except Exception as cursed: print(cursed)
+        # READ THE CSV, Intentionally no try except is used here because any error would
+        # make the program unable to run ahead anyways, so let it be a blocking error.
+        with open(self.relations_path, mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file); next(reader) # unused header
+            for src, dst, wgh in reader:
+                nodes.add(src); nodes.add(dst) # collect the unique nodes
+                edges.add((src, dst, float(wgh))) # store the  unique edges
 
         # Clever way to map node string names into integer index
         name_to_id = {name: idx for idx, name in enumerate(sorted(nodes))}
@@ -41,14 +41,14 @@ class GRAPHLOADER:
 
     # ========================================================================================================
     def search_edge(self, src, dst):
-        try:
+        try: # let errors occur without causing a full crash
             if src is str: src = self.name_to_id[src]
             if dst is str: dst = self.name_to_id[dst]
             for destinations, wgh in self.ADJ_list[src]:
                 if destinations != dst: continue
                 return self.id_to_name[src], self.id_to_name[dst], wgh
             print(f"{src}, {dst} NOT FOUND")
-        except: print("Searching Error... likely indexing error... maybe")
+        except Exception as cursed: print(cursed)
         
     # ========================================================================================================
     def display_adjacency_list(self):
