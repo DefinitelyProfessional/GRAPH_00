@@ -18,4 +18,10 @@ if __name__ == "__main__":
     print(GRAPH.name_to_id.keys())
     start_node = input("Start : ")
     end_node = input("End : ")
-    routing_engine(GRAPH.ADJ_list, GRAPH.name_to_id, GRAPH.id_to_name, start_node, end_node)
+    total_distance, path_names = routing_engine(GRAPH.ADJ_list, GRAPH.name_to_id, GRAPH.id_to_name, start_node, end_node)
+    
+    for i in range(1, len(path_names)):
+        src, dst = GRAPH.name_to_id[path_names[i-1]], GRAPH.name_to_id[path_names[i]]
+        src, dst, wgh = GRAPH.search_edge(src, dst)
+        print(f"{src} -> {dst} : {wgh}")
+    print("total distance :",  total_distance)

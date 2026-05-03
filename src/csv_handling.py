@@ -32,15 +32,24 @@ class GRAPHLOADER:
         id_to_name = {idx: name for name, idx in name_to_id.items()}
 
         # Create the graph environment for the sake of dijkstra's efficiency !
-        # This will be in the form of an adjacency list !
-        # [src0] -> [(dst0, wgh0), (dst1, wgh1), (dst2, wgh2)]
-        # [src1] -> [(dst0, wgh0), (dst1, wgh1)]
+        # This will be in the form of an adjacency list ! REFER TO code_breakdown\csv_handling.md
         ADJ_list = [[] for _ in range(len(nodes))]
         for src, dst, wgh in edges: # note edges is alredy a unique set
             ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
 
         return name_to_id, id_to_name, ADJ_list
 
+    # ========================================================================================================
+    def search_edge(self, src, dst):
+        try:
+            if src is str: src = self.name_to_id[src]
+            if dst is str: dst = self.name_to_id[dst]
+            for destinations, wgh in self.ADJ_list[src]:
+                if destinations != dst: continue
+                return self.id_to_name[src], self.id_to_name[dst], wgh
+            print(f"{src}, {dst} NOT FOUND")
+        except: print("Searching Error... likely indexing error... maybe")
+        
     # ========================================================================================================
     def display_adjacency_list(self):
         """
