@@ -16,9 +16,18 @@ src2,dst2,wgh2
 > bidirectional edges can be represented by having two entries in the CSV file, one for each direction.  
 
 Note that negative weights are allowed but not accounted for in the current implementation of our Dijkstra's algorithm. So unpredictable results may occur if done so, therefore it is recommended to only use non-negative weights.
+## `GRAPHLOADER class` handles automatic csv loading and store important data structures
+```python
+class GRAPHLOADER:
+    def __init__(self, relations_path):
+        self.relations_path = relations_path
+        self.generate_relations_path = relations_path
+        self.name_to_id, self.id_to_name, self.ADJ_list = self.prepare_adj_list()
+```
+The following are methods callable within the `GRAPHLOADER` class :
 
 ## `prepare_adj_list(relations_path: str)` returns `name_to_id`, `id_to_name`, and `ADJ_list`
-The `prepare_adj_list` function takes the path to the `relations.csv` file as input and returns three things taht are used for the program :
+The `prepare_adj_list` function takes the path to the `relations.csv` file as input and returns three things that are used for the program :
 1. `name_to_id`: a dictionary that maps node names (strings) to their corresponding integer index.
 2. `id_to_name`: a dictionary that maps node integer index back to their corresponding names.
 3. `ADJ_list`: an adjacency list representation of the graph.
@@ -44,6 +53,9 @@ ADJ_list = [
 ```
 
 # Dev Tools
+## `search_edge(self, src, dst)`
+a half baked funciton to search and return an edge in the graph
+
 ## `generate_relations_csv(relations_path: str, directional=True, num_nodes=10, num_edges=20, min_weight=1, max_weight=100)`
 generates a random `relations.csv` file with the specified parameters.
 
