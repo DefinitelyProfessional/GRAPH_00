@@ -1,90 +1,111 @@
-import heapq
-INF = float("inf")
 
-def optimized_dijkstra(graph, start_node, end_node):
-    """
-    The core algorithmic engine. 
-    Expects nodes to be integers (0 to N-1).
-    graph format: graph[source_id] = [(neighbor_id, weight), ...]
-    """
-    num_nodes = len(graph)
-    
-    # Pre-allocated arrays (Lighting fast integer lookups)
-    distances = [INF] * num_nodes
-    predecessors = [-1] * num_nodes  # -1 means no predecessor yet
-    visited = [False] * num_nodes
-    
-    distances[start_node] = 0
-    
-    # Priority Queue stores tuples: (current_distance, node_id)
-    pq = [(0, start_node)]
-    
-    while pq:
-        # 1. Pop the node with the absolute shortest known distance
-        current_distance, current_node = heapq.heappop(pq)
-        
-        # 2. Early Exit: If we reached the destination, we are done
-        if current_node == end_node:
-            break
+from heapq import heappop as pop, heappush as push # Make use of efficient priority queue
+
+class GRAPHSTRUCTURE:
+    def __init__(self, ADJ_list, name_to_id, id_to_name):
+        self.ADJ_list = ADJ_list # Made by the DATALOADER
+        self.name_to_id = name_to_id # getfrom DATALOADER
+        self.id_to_name = id_to_name # getfrom DATALOADER
+        self._INF = float("inf") # a preference to define infinity
+        self.num_nodes = len(ADJ_list)
+
+    # ========================================================================================================
+    def shortest_path(self, start: str, end: str):
+        """
+        ## The simplest most efficient dijkstra implemntation in python
+        """
+        if start not in self.name_to_id or end not in self.name_to_id:
+            print("Non-Existant Nodes !!!"); return None, []
             
-        # 3. Skip stale entries (nodes we've already fully processed)
-        if visited[current_node]:
-            continue
-            
-        # Mark as permanently settled
-        visited[current_node] = True
+        # Convert to node id's being integer indexes !
+        start_node = self.name_to_id[start]
+        end_node = self.name_to_id[end]
+
+        # PRE-ALLOCATED LISTS FOR THE SAKE OF EFFICIENCY
+        # Refer to code_breakdown\dijkstra.ipynb for explanations
+        distances = [self._INF] * self.num_nodes
+        visited = [False] * self.num_nodes
+        predecessors = [-1] * self.num_nodes
         
-        # 4. Explore all neighbors (Fast iteration over a list of tuples)
-        for neighbor, weight in graph[current_node]:
-            if visited[neighbor]:
-                continue
+        distances[start_node] = 0 # trivially we start at the starting node with wgh 0
+        
+        # Priority Queue of nodes to visit : (current_distance, node_id)
+        visit_queue = [(0, start_node)]
+        
+        # Visit every node that needs to be explored
+        while visit_queue:
+            # Pop the node with the shortest known distance !
+            current_distance, current_node = pop(visit_queue)
+            
+            # Program arrived at destination !
+            if current_node == end_node: break
                 
-            new_distance = current_distance + weight
-            
-            # 5. Relaxation Step: Did we find a faster route?
-            if new_distance < distances[neighbor]:
-                distances[neighbor] = new_distance
-                predecessors[neighbor] = current_node  # Record the path step
-                heapq.heappush(pq, (new_distance, neighbor))
+            # Skip already visited nodes
+            if visited[current_node]: continue
                 
-    # --- Path Reconstruction ---
-    if distances[end_node] == INF:
-        return INF, []  # No path exists
+            # Mark current node visited
+            visited[current_node] = True
+            
+            # Explore ALL "neighbors", if no path exists from start to end
+            # The visit_queue will be exhausted and this loop stops
+            for neighbor, wgh in self.ADJ_list[current_node]:
+                if visited[neighbor]: continue # SKIP
+                
+                new_distance = current_distance + wgh
+                
+                # keep track of shortest distances ! refer to
+                # code_breakdown\dijkstra.ipynb for explanations
+                if new_distance < distances[neighbor]:
+                    distances[neighbor] = new_distance
+                    predecessors[neighbor] = current_node
+                    push(visit_queue, (new_distance, neighbor))
+                    
+        # If the end node distance ends up to still be INF that
+        # indicates there is no path from start to end, how sad
+        if distances[end_node] == self._INF:
+            print(f"No path found between {start} and {end}."); return None, []
         
-    path = []
-    current = end_node
-    while current != -1:  # Trace backward until we hit the start node
-        path.append(current)
-        current = predecessors[current]
+        # refer to code_breakdown\dijkstra.ipynb for explanations
+        path = []
+        current = end_node
+        # Trace backward until we hit the start node
+        while current != -1:
+            path.append(current)
+            current = predecessors[current]
         
-    path.reverse()  # Flip it to read from Start -> End
-    
-    return distances[end_node], path
-
-
-# ==========================================
-# Translation Layer (For your CSV Data)
-# ==========================================
-
-def routing_engine(ADJ_list, name_to_id, id_to_name, start_node, end_node):
-    # 3. Check if user input is valid
-    if start_node not in name_to_id or end_node not in name_to_id:
-        return "Invalid start or end node."
+        # Flip it to read from Start -> End
+        path.reverse()
         
-    # 4. Run the Engine!
-    start_id = name_to_id[start_node]
-    end_id = name_to_id[end_node]
+        return distances[end_node], path
     
-    total_distance, path_ids = optimized_dijkstra(ADJ_list, start_id, end_id)
-    
-    # 5. Translate results back to human-readable strings
-    if total_distance == INF:
-        return f"No path found between {start_node} and {end_node}."
-        
-    path_names = [id_to_name[node_id] for node_id in path_ids]
-    
-    return total_distance, path_names
+    # ========================================================================================================
+    def search_edge(self, src, dst):
+        """
+        ## Something to make life easier, searches for existing edges in O(n)
+        """
+        try: # let errors occur without causing a full crash
+            for destinations, wgh in self.ADJ_list[src]:
+                if destinations != dst: continue
+                return src, dst, wgh # match found !!
+            print(f"{src}, {dst} NOT FOUND")
+        except Exception as cursed: print(cursed)
+        return None, None, None # false condition if it were to reach here ...
 
-# --- Demo Execution ---
-if __name__ == "__main__":
-    pass
+    # ========================================================================================================
+    def routing_engine(self, start, end):
+        """
+        ## To manage the shortest path function usage
+        """
+        # Conduct the shortest path algortihm
+        total_distance, path_ids = self.shortest_path(start, end)
+        
+        # evaluate results
+        if (total_distance, path_ids) == (None, []): return
+        
+        # display the series of path traversals
+        for i in range(1, len(path_ids)):
+            src, dst, wgh = self.search_edge(path_ids[i-1], path_ids[i])
+            if (src, dst, wgh) == (None, None, None): continue # skip errors
+            print(f"{self.id_to_name[src]} -> {self.id_to_name[dst]} : {wgh}")
+        
+        print(f"Total Distance : {total_distance}")

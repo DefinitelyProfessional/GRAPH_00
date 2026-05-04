@@ -6,7 +6,7 @@ by Stephen Matthews
 import csv
 import random
 
-class GRAPHLOADER:
+class DATALOADER:
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path
@@ -15,12 +15,12 @@ class GRAPHLOADER:
     # ========================================================================================================
     def prepare_adj_list(self):
         """
-        # Read CSV and prepare the graph environment
+        ## Read CSV and prepare the graph environment
         """
         nodes = set()
         edges = set()
         # READ THE CSV, Intentionally no try except is used here because any error would
-        # make the program unable to run ahead anyways, so let it be a blocking error.
+        # make the program unable to continue run anyways, so let it be a blocking error
         with open(self.relations_path, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file); next(reader) # unused header
             for src, dst, wgh in reader:
@@ -31,29 +31,18 @@ class GRAPHLOADER:
         name_to_id = {name: idx for idx, name in enumerate(sorted(nodes))}
         id_to_name = {idx: name for name, idx in name_to_id.items()}
 
-        # Create the graph environment for the sake of dijkstra's efficiency !
-        # This will be in the form of an adjacency list ! REFER TO code_breakdown\csv_handling.md
+        # Create the graph environment as an adjacency list for the sake of dijkstra's efficiency
+        # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
         ADJ_list = [[] for _ in range(len(nodes))]
         for src, dst, wgh in edges: # note edges is alredy a unique set
             ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
 
         return name_to_id, id_to_name, ADJ_list
-
-    # ========================================================================================================
-    def search_edge(self, src, dst):
-        try: # let errors occur without causing a full crash
-            if src is str: src = self.name_to_id[src]
-            if dst is str: dst = self.name_to_id[dst]
-            for destinations, wgh in self.ADJ_list[src]:
-                if destinations != dst: continue
-                return self.id_to_name[src], self.id_to_name[dst], wgh
-            print(f"{src}, {dst} NOT FOUND")
-        except Exception as cursed: print(cursed)
         
     # ========================================================================================================
     def display_adjacency_list(self):
         """
-        # a dev tool to help visualize teh adjacency list
+        ## a dev tool to help visualize teh adjacency list
         """
         map_ = self.id_to_name
         for src, relations in enumerate(self.ADJ_list):
@@ -64,7 +53,7 @@ class GRAPHLOADER:
     # ========================================================================================================
     def generate_relations_csv(self, directional=True, num_nodes=10, num_edges=20, min_weight=1, max_weight=100):
         """
-        # Self explanatory ahh function.
+        ## Self explanatory ahh function.
         random and exactly the specified amount of nodes & edges.
         """
         # The max possible edges in a directed graph is V * (V - 1) that "-1" being no self loops allowed
@@ -110,8 +99,6 @@ class GRAPHLOADER:
                         writer.writerow((nodes[dst_id], nodes[src_id], wgh))
         except Exception as cursed: print(cursed)
 
-
-
 # Quick generate relations
 if __name__ == "__main__":
     # setup path connections to required files
@@ -120,5 +107,5 @@ if __name__ == "__main__":
     RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
     if input("Generate random relations ? (y/n)") in "Yy":
-        LOADER = GRAPHLOADER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=False, num_nodes=26**2, num_edges=1000, min_weight=1, max_weight=50)
+        LOADER = DATALOADER(RELATIONS_FILE_PATH)
+        LOADER.generate_relations_csv(directional=True, num_nodes=26**2, num_edges=1000, min_weight=1, max_weight=50)
