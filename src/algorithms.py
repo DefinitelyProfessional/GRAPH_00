@@ -2,12 +2,14 @@
 from heapq import heappop as pop, heappush as push # Make use of efficient priority queue
 
 class GRAPHSTRUCTURE:
-    def __init__(self, ADJ_list, name_to_id, id_to_name):
+    def __init__(self, ADJ_list: list, name_to_id: dict, id_to_name: dict, max_str_len: int):
         self.ADJ_list = ADJ_list # Made by the DATALOADER
         self.name_to_id = name_to_id # getfrom DATALOADER
         self.id_to_name = id_to_name # getfrom DATALOADER
         self._INF = float("inf") # a preference to define infinity
         self.num_nodes = len(ADJ_list)
+        self.node_names = self.name_to_id.keys()
+        self.max_str_len = max_str_len # niche for displays
 
     # ========================================================================================================
     def shortest_path(self, start: str, end: str):
@@ -109,3 +111,9 @@ class GRAPHSTRUCTURE:
             print(f"{self.id_to_name[src]} -> {self.id_to_name[dst]} : {wgh}")
         
         print(f"Total Distance : {total_distance}")
+    
+    # ========================================================================================================
+    def display_nodes(self, width=20):
+        for idx, name in enumerate(self.node_names, start=1):
+            print(f"{name:<{self.max_str_len}}", end=" | " if idx % width != 0 else "\n")
+        print()

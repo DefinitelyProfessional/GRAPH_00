@@ -10,7 +10,7 @@ class DATALOADER:
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path
-        self.name_to_id, self.id_to_name, self.ADJ_list = self.prepare_adj_list()
+        self.max_str_len, self.name_to_id, self.id_to_name, self.ADJ_list = self.prepare_adj_list()
 
     # ========================================================================================================
     def prepare_adj_list(self):
@@ -36,8 +36,11 @@ class DATALOADER:
         ADJ_list = [[] for _ in range(len(nodes))]
         for src, dst, wgh in edges: # note edges is alredy a unique set
             ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
+        
+        # get the max length of node strings, niche for displays
+        max_str_len = max(len(s) for s in nodes)
 
-        return name_to_id, id_to_name, ADJ_list
+        return max_str_len, name_to_id, id_to_name, ADJ_list
         
     # ========================================================================================================
     def display_adjacency_list(self):
@@ -108,4 +111,4 @@ if __name__ == "__main__":
 
     if input("Generate random relations ? (y/n)") in "Yy":
         LOADER = DATALOADER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, num_nodes=26**2, num_edges=1000, min_weight=1, max_weight=50)
+        LOADER.generate_relations_csv(directional=True, num_nodes=26**2, num_edges=10000, min_weight=1, max_weight=50)
