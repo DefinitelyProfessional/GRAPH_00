@@ -56,12 +56,13 @@ class GRAPHSTRUCTURE:
                 
                 new_distance = current_distance + wgh
                 
+                # Skip further distances or ones that don't change the the distance
+                if new_distance >= distances[neighbor]: continue
                 # keep track of shortest distances ! refer to
                 # code_breakdown\dijkstra.ipynb for explanations
-                if new_distance < distances[neighbor]:
-                    distances[neighbor] = new_distance
-                    predecessors[neighbor] = current_node
-                    push(visit_queue, (new_distance, neighbor))
+                distances[neighbor] = new_distance
+                predecessors[neighbor] = current_node
+                push(visit_queue, (new_distance, neighbor))
                     
         # If the end node distance ends up to still be INF that
         # indicates there is no path from start to end, how sad

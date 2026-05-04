@@ -81,10 +81,8 @@ class DATALOADER:
             if src_idx == dst_idx: continue # Skip self-loops
             # For bidirectional, (A, B) is the same as (B, A)
             # A clever way to go around that is to ensure A n B is sorted
-            if not directional: edge_key = tuple(sorted((src_idx, dst_idx)))
-            else: edge_key = (src_idx, dst_idx)
-            # Ensure no dupes exist
-            if edge_key not in edges: edges.add(edge_key)
+            # edges being a set already ensures no dupes exist
+            edges.add((src_idx, dst_idx) if directional else tuple(sorted((src_idx, dst_idx))))
 
         try: # WRITE TO CSV WHILE ALSO GENERATING THE WEIGHTS   
             with self.generate_relations_path.open('w', newline='', encoding='utf-8') as file:
