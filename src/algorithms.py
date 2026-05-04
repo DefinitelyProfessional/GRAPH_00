@@ -1,4 +1,6 @@
-
+"""
+# CLASS DEFINITIONS FOR THE GRAPH BASED ALGORITHMS
+"""
 from heapq import heappop as pop, heappush as push # Make use of efficient priority queue
 
 class GRAPHSTRUCTURE:
@@ -23,7 +25,6 @@ class GRAPHSTRUCTURE:
         start_node = self.name_to_id[start]
         end_node = self.name_to_id[end]
 
-        # PRE-ALLOCATED LISTS FOR THE SAKE OF EFFICIENCY
         # Refer to code_breakdown\dijkstra.ipynb for explanations
         distances = [self._INF] * self.num_nodes
         visited = [False] * self.num_nodes
