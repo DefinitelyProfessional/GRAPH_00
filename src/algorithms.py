@@ -114,6 +114,9 @@ class GRAPHSTRUCTURE:
     
     # ========================================================================================================
     def display_nodes(self, width=20):
+        """
+        ## To make life easier, uses data from DATALOADER
+        """
         for idx, name in enumerate(self.node_names, start=1):
             print(f"{name:<{self.max_str_len}}", end=" | " if idx % width != 0 else "\n")
         print()
