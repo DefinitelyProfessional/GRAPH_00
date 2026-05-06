@@ -10,7 +10,7 @@ class DATALOADER:
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path
-        self.max_str_len, self.name_to_id, self.id_to_name, self.ADJ_list = self.prepare_adj_list()
+        self.max_str_len, self.name_to_id, self.id_to_name, self.ADJ_list, self.ADJ_mtrx = self.prepare_adj_list()
 
     # ========================================================================================================
     def prepare_adj_list(self):
@@ -33,14 +33,17 @@ class DATALOADER:
 
         # Create the graph environment as an adjacency list for the sake of dijkstra's efficiency
         # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
-        ADJ_list = [[] for _ in range(len(nodes))]
+        num_nodes = len(nodes)
+        ADJ_list = [[] for _ in range(num_nodes)]
+        ADJ_mtrx = [[float("inf")]*num_nodes for _ in range(num_nodes)]
         for src, dst, wgh in edges: # note edges is alredy a unique set
             ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
+            ADJ_mtrx[name_to_id[src]][name_to_id[dst]] = wgh
         
         # get the max length of node strings, niche for displays
         max_str_len = max(len(s) for s in nodes)
 
-        return max_str_len, name_to_id, id_to_name, ADJ_list
+        return max_str_len, name_to_id, id_to_name, ADJ_list, ADJ_mtrx
         
     # ========================================================================================================
     def display_adjacency_list(self):

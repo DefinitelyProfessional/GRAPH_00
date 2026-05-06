@@ -12,7 +12,7 @@ from algorithms import GRAPHSTRUCTURE
 
 # read the relations file and setup the program
 DATA = DATALOADER(RELATIONS_FILE_PATH)
-GRAPH = GRAPHSTRUCTURE(DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
+GRAPH = GRAPHSTRUCTURE(DATA.ADJ_mtrx, DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
 
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
