@@ -15,7 +15,7 @@ src2,dst2,wgh2
 
 > bidirectional edges can be represented by having two entries in the CSV file, one for each direction.  
 
-Note that negative weights are allowed but not accounted for in the current implementation of our Dijkstra's algorithm. So unpredictable results may occur if done so, therefore it is recommended to only use non-negative weights.
+Note that negative wgh_sum are allowed but not accounted for in the current implementation of our Dijkstra's algorithm. So unpredictable results may occur if done so, therefore it is recommended to only use non-negative wgh_sum.
 ## `GRAPHLOADER class` handles automatic csv loading and store important data structures
 ```python
 class GRAPHLOADER:
@@ -56,7 +56,7 @@ ADJ_list = [
 ## `search_edge(self, src, dst)`
 a half baked funciton to search and return an edge in the graph
 
-## `generate_relations_csv(relations_path: str, directional=True, num_nodes=10, num_edges=20, min_weight=1, max_weight=100)`
+## `generate_relations_csv(relations_path: str, directional=True, nodecount=10, num_edges=20, min_weight=1, max_weight=100)`
 generates a random `relations.csv` file with the specified parameters.
 
 ## `display_adjacency_list(id_to_name, ADJ_list)`

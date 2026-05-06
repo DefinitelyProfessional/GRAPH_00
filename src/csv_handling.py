@@ -33,9 +33,9 @@ class DATALOADER:
 
         # Create the graph environment as an adjacency list for the sake of dijkstra's efficiency
         # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
-        num_nodes = len(nodes)
-        ADJ_list = [[] for _ in range(num_nodes)]
-        ADJ_mtrx = [[float("inf")]*num_nodes for _ in range(num_nodes)]
+        nodecount = len(nodes)
+        ADJ_list = [[] for _ in range(nodecount)]
+        ADJ_mtrx = [[float("inf")]*nodecount for _ in range(nodecount)]
         for src, dst, wgh in edges: # note edges is alredy a unique set
             ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
             ADJ_mtrx[name_to_id[src]][name_to_id[dst]] = wgh
@@ -57,19 +57,19 @@ class DATALOADER:
             print()
 
     # ========================================================================================================
-    def generate_relations_csv(self, directional=True, num_nodes=10, num_edges=20, min_weight=1, max_weight=100):
+    def generate_relations_csv(self, directional=True, nodecount=10, num_edges=20, min_weight=1, max_weight=100):
         """
         ## Self explanatory ahh function.
         random and exactly the specified amount of nodes & edges.
         """
         # The max possible edges in a directed graph is V * (V - 1) that "-1" being no self loops allowed
         # As for a bidirectional graph it would be half of a directional graph cuz of going in 2 ways.
-        max_possible_edges = num_nodes * (num_nodes - 1) if directional else (num_nodes * (num_nodes - 1)) // 2
+        max_possible_edges = nodecount * (nodecount - 1) if directional else (nodecount * (nodecount - 1)) // 2
         if num_edges > max_possible_edges: num_edges = max_possible_edges
 
         # Generate the list of nodes name (0='A', 25='Z', 26='AA', ...)
         nodes = []
-        for i in range(num_nodes):
+        for i in range(nodecount):
             name = ""
             while i >= 0: # from Least Significant
                 name = chr(i % 26 + 65) + name
@@ -79,8 +79,8 @@ class DATALOADER:
         # Generate unique edges
         edges = set()
         while len(edges) < num_edges:
-            src_idx = random.randint(0, num_nodes - 1)
-            dst_idx = random.randint(0, num_nodes - 1)
+            src_idx = random.randint(0, nodecount - 1)
+            dst_idx = random.randint(0, nodecount - 1)
             if src_idx == dst_idx: continue # Skip self-loops
             # For bidirectional, (A, B) is the same as (B, A)
             # A clever way to go around that is to ensure A n B is sorted
@@ -112,4 +112,4 @@ if __name__ == "__main__":
 
     if input("Generate random relations ? (y/n)") in "Yy":
         LOADER = DATALOADER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, num_nodes=26**2, num_edges=10000, min_weight=1, max_weight=50)
+        LOADER.generate_relations_csv(directional=True, nodecount=26**2, num_edges=10000, min_weight=1, max_weight=50)
