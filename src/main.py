@@ -16,6 +16,7 @@ GRAPH = GRAPHSTRUCTURE(DATA.ADJ_mtrx, DATA.ADJ_list, DATA.name_to_id, DATA.id_to
 
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
+    # DATA.display_adjacency_list()
     GRAPH.display_nodes()
     start_node = input("Start : ")
     end_node = input("End : ")

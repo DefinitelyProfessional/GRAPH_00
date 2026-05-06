@@ -112,4 +112,4 @@ if __name__ == "__main__":
 
     if input("Generate random relations ? (y/n)") in "Yy":
         LOADER = DATALOADER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, nodecount=26**2, num_edges=5000, min_weight=1, max_weight=50)
+        LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=5000, min_weight=1, max_weight=50)
