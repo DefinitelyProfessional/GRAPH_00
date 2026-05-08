@@ -20,10 +20,6 @@ class GRAPHDATA:
         self.ADJ_obj = ADJ_obj # can be adjacency LIST xor MTRX
         self.max_str_len = max_str_len # for display
 ```
-### `display_adjacency_list()` debug tool to display adjacency list in a readable format
-
-### `display_nodes()` function to display all nodes in the graph in an arguably readable format
-
 ## `AUTOLOADGRAPHDATA` class
 ```python
 class AUTOLOADGRAPHDATA(GRAPHDATA):
@@ -37,4 +33,8 @@ class AUTOLOADGRAPHDATA(GRAPHDATA):
             graphdata.ADJ_obj,
             graphdata.max_str_len)
 ```
-This is a rather peculiar way of using python classes, but I find it to be a useful way to enable passing the `graphdata` object enough to transfer all of the packaged data into the classes that need them. Inheritance is used over and over again to make use of this somewhat modular structure I made. 
+This is a rather peculiar way of using python classes, but I find it to be a useful way to enable passing the `graphdata` object enough to transfer all of the packaged data into the classes that need them. Inheritance is used over and over again to make use of this somewhat modular structure I made.
+
+### `display_adjacency_list()` debug tool to display adjacency list in a readable format
+
+### `display_nodes()` function to display all nodes in the graph in an arguably readable format

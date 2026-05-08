@@ -6,7 +6,7 @@ from graphdataclass import GRAPHDATA
 import csv
 import random
 
-class DATALOADER(GRAPHDATA):
+class DATALOADER:
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path

@@ -102,7 +102,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
 
 class GRAPHLIST(GRAPHSTRUCTURE):
     """
-    class optimized for sparse graphs
+    ## class optimized for sparse graphs
     """
     def __init__(self, graphdata: GRAPHDATA): super().__init__(graphdata)
     # ========================================================================================================     
@@ -120,12 +120,16 @@ class GRAPHLIST(GRAPHSTRUCTURE):
             print(f"{src}, {dst} NOT FOUND")
         except Exception as cursed: print(cursed)
         return None, None, None # false condition if it were to reach here ...
+    # ========================================================================================================
+    def build_MST():
+        # TODO woy implement MST with ADJ_list
+        return
 
 
 
 class GRAPHMTRX(GRAPHSTRUCTURE):
     """
-    class optimized for dense graphs
+    ## class optimized for dense graphs
     """
     def __init__(self, graphdata: GRAPHDATA): super().__init__(graphdata)
     # ========================================================================================================
@@ -143,3 +147,7 @@ class GRAPHMTRX(GRAPHSTRUCTURE):
             else: print(f"{src}, {dst} NOT FOUND")
         except Exception as cursed: print(cursed)
         return None, None, None # false condition if it were to reach here ...
+    # ========================================================================================================
+    def build_MST():
+        # TODO woy implement MST with ADJ_mtrx
+        return
