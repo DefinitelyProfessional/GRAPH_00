@@ -1,5 +1,6 @@
 """
-STORE CLASSES TO ENCAPSULATE DATA FOR TRANSFERS
+# STORE CLASSES TO ENCAPSULATE DATA FOR TRANSFERS
+By Stephen Matthews
 """
 class GRAPHDATA:
     def __init__(self,
@@ -22,8 +23,8 @@ class GRAPHDATA:
         """
         ## a dev tool to help visualize the adjacency list
         """
-        if self.ADJ_type != "LIST": return
-        map_ = self.id_to_name
+        if self.ADJ_type != "LIST": return # this is an adj list specific debug tool
+        map_ = self.id_to_name # prevent repeated self lookups
         for src, relations in enumerate(self.ADJ_obj):
             print(f"{map_[src]} : ", end="")
             for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
