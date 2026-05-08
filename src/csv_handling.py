@@ -25,7 +25,7 @@ class DATALOADER:
             reader = csv.reader(file); next(reader) # unused header
             for src, dst, wgh in reader:
                 nodes.add(src); nodes.add(dst) # collect the unique nodes
-                edges.add((src, dst, float(wgh))) # store the  unique edges
+                edges.add((src, dst, float(wgh))) # store the unique edges
 
         # Clever way to map node string names into integer index
         name_to_id = {name: idx for idx, name in enumerate(sorted(nodes))}

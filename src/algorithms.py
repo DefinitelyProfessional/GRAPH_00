@@ -3,9 +3,8 @@
 """
 from heapq import heappop as pop, heappush as push # Make use of efficient priority queue
 
-class GRAPHSTRUCTURE:
-    def __init__(self, ADJ_mtrx: list, ADJ_list: list, name_to_id: dict, id_to_name: dict, max_str_len: int):
-        self.ADJ_mtrx = ADJ_mtrx # Made by the DATALOADER
+class GRAPHLIST:
+    def __init__(self, ADJ_list: list, name_to_id: dict, id_to_name: dict, max_str_len: int):
         self.ADJ_list = ADJ_list # Made by the DATALOADER
         self.name_to_id = name_to_id # getfrom DATALOADER
         self.id_to_name = id_to_name # getfrom DATALOADER

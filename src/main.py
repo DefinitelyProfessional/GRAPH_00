@@ -8,16 +8,24 @@ RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
 # external py files to decentralize definitions
 from csv_handling import DATALOADER
-from algorithms import GRAPHSTRUCTURE
+from algorithms import GRAPHLIST
 
 # read the relations file and setup the program
 DATA = DATALOADER(RELATIONS_FILE_PATH)
-GRAPH = GRAPHSTRUCTURE(DATA.ADJ_mtrx, DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
+GLIST = GRAPHLIST(DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
 
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
+    while True:
+
+        match input():
+            case "1":
+                pass
+            case "2":
+                pass
+
     # DATA.display_adjacency_list()
-    GRAPH.display_nodes()
+    GLIST.display_nodes()
     start_node = input("Start : ")
     end_node = input("End : ")
-    GRAPH.routing_engine(start_node, end_node)
+    GLIST.routing_engine(start_node, end_node)
