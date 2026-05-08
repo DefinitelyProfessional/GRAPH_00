@@ -12,8 +12,8 @@ from algorithms import GRAPHLIST, GRAPHMTRX
 
 # read the relations file and setup the program
 DATA = DATALOADER(RELATIONS_FILE_PATH)
-GLIST = GRAPHLIST(DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
-GMTRX = GRAPHMTRX(DATA.ADJ_mtrx, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
+GRAPH = GRAPHLIST(DATA.graphdata) if DATA.graphdata.ADJ_type == "LIST" else GRAPHMTRX(DATA.graphdata)
+
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
 
@@ -26,13 +26,9 @@ if __name__ == "__main__":
     #         case "2":
     #             pass
 
-    # DATA.display_adjacency_list()
-    GLIST.display_nodes()
+    print(GRAPH.ADJ_type)
+    # GRAPH.display_adjacency_list()
+    GRAPH.display_nodes()
     start_node = input("Start : ")
     end_node = input("End : ")
-    GLIST.routing_engine(start_node, end_node)
-    
-    GMTRX.display_nodes()
-    start_node = input("Start : ")
-    end_node = input("End : ")
-    GMTRX.routing_engine(start_node, end_node)
+    GRAPH.routing_engine(start_node, end_node)

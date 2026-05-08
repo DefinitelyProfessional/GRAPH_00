@@ -2,18 +2,18 @@
 # CSV FILE HANDLING AND PREPARING DATA FOR THE PROGRAM
 by Stephen Matthews
 """
-
+from graphdataclass import GRAPHDATA
 import csv
 import random
 
-class DATALOADER:
+class DATALOADER(GRAPHDATA):
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path
-        self.max_str_len, self.name_to_id, self.id_to_name, self.ADJ_list, self.ADJ_mtrx = self.prepare_adj_list()
+        self.graphdata = self.prepare_graph()
 
     # ========================================================================================================
-    def prepare_adj_list(self):
+    def prepare_graph(self):
         """
         ## Read CSV and prepare the graph environment
         """
@@ -31,33 +31,23 @@ class DATALOADER:
         name_to_id = {name: idx for idx, name in enumerate(sorted(nodes))}
         id_to_name = {idx: name for name, idx in name_to_id.items()}
 
+        # get the max length of node strings, niche for displays
+        max_str_len = max(len(s) for s in nodes)
+
         # Create the graph environment as an adjacency list for the sake of dijkstra's efficiency
         # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
         nodecount = len(nodes)
 
-        # TODO choose either use only list or only matrix edges > (max_edges n^2 - n)//2
-
-        ADJ_list = [[] for _ in range(nodecount)]
-        ADJ_mtrx = [[float("inf")]*nodecount for _ in range(nodecount)]
-        for src, dst, wgh in edges: # note edges is alredy a unique set
-            ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
-            ADJ_mtrx[name_to_id[src]][name_to_id[dst]] = wgh
-        
-        # get the max length of node strings, niche for displays
-        max_str_len = max(len(s) for s in nodes)
-
-        return max_str_len, name_to_id, id_to_name, ADJ_list, ADJ_mtrx
-        
-    # ========================================================================================================
-    def display_adjacency_list(self):
-        """
-        ## a dev tool to help visualize teh adjacency list
-        """
-        map_ = self.id_to_name
-        for src, relations in enumerate(self.ADJ_list):
-            print(f"{map_[src]} : ", end="")
-            for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
-            print()
+        if len(edges) <= ((nodecount*(nodecount-1))*3)//20: # ADJ_list will be more efficient
+            ADJ_list = [[] for _ in range(nodecount)]
+            for src, dst, wgh in edges: # note edges is alredy a unique set
+                ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
+            return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), "LIST", ADJ_list, max_str_len)
+        else: # ADJ_mtrx will be more efficient
+            ADJ_mtrx = [[float("inf")]*nodecount for _ in range(nodecount)]
+            for src, dst, wgh in edges: # note edges is alredy a unique set
+                ADJ_mtrx[name_to_id[src]][name_to_id[dst]] = wgh
+            return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), "MTRX", ADJ_mtrx, max_str_len)
 
     # ========================================================================================================
     def generate_relations_csv(self, directional=True, nodecount=10, num_edges=20, min_weight=1, max_weight=100):
@@ -115,4 +105,4 @@ if __name__ == "__main__":
 
     if input("Generate random relations ? (y/n)") in "Yy":
         LOADER = DATALOADER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=5000, min_weight=1, max_weight=50)
+        LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=10000, min_weight=1, max_weight=1000)
