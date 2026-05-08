@@ -16,6 +16,8 @@ GLIST = GRAPHLIST(DATA.ADJ_list, DATA.name_to_id, DATA.id_to_name, DATA.max_str_
 GMTRX = GRAPHMTRX(DATA.ADJ_mtrx, DATA.name_to_id, DATA.id_to_name, DATA.max_str_len)
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
+
+    # TODO PROGRAM CONTROL WOY
     # while True:
 
     #     match input():

@@ -34,6 +34,9 @@ class DATALOADER:
         # Create the graph environment as an adjacency list for the sake of dijkstra's efficiency
         # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
         nodecount = len(nodes)
+
+        # TODO choose either use only list or only matrix edges > (max_edges n^2 - n)//2
+
         ADJ_list = [[] for _ in range(nodecount)]
         ADJ_mtrx = [[float("inf")]*nodecount for _ in range(nodecount)]
         for src, dst, wgh in edges: # note edges is alredy a unique set
