@@ -9,15 +9,13 @@ class GRAPHDATA:
                  id_to_name: dict,
                  nodecount: int,
                  nodenames: set,
-                 ADJ_type: str,
-                 ADJ_obj: list,
+                 ADJ_list: list,
                  max_str_len: int):
         self.name_to_id = name_to_id # to translate name strings to node_id/indeces
         self.id_to_name = id_to_name # to translate node_id/indeces to name strings
         self.nodecount = nodecount # store how many nodes
         self.nodenames = nodenames # store names of nodes
-        self.ADJ_type = ADJ_type # store the type of ADJ_obj : LIST xor MTRX
-        self.ADJ_obj = ADJ_obj # can be adjacency LIST xor MTRX
+        self.ADJ_list = ADJ_list # adjacency list
         self.max_str_len = max_str_len # for display
 ```
 ## `AUTOLOADGRAPHDATA` class
@@ -29,8 +27,7 @@ class AUTOLOADGRAPHDATA(GRAPHDATA):
             graphdata.id_to_name,
             graphdata.nodecount,
             graphdata.nodenames,
-            graphdata.ADJ_type,
-            graphdata.ADJ_obj,
+            graphdata.ADJ_list,
             graphdata.max_str_len)
 ```
 This is a rather peculiar way of using python classes, but I find it to be a useful way to enable passing the `graphdata` object enough to transfer all of the packaged data into the classes that need them. Inheritance is used over and over again to make use of this somewhat modular structure I made.

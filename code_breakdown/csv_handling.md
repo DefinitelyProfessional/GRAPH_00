@@ -16,15 +16,15 @@ src2,dst2,wgh2
 > bidirectional edges can be represented by having two entries in the CSV file, one for each direction.  
 
 Note that negative wgh_sum are allowed but not accounted for in the current implementation of our Dijkstra's algorithm. So unpredictable results may occur if done so, therefore it is recommended to only use non-negative wgh_sum.
-## `GRAPHLOADER class` handles automatic csv loading and store important data structures
+## `CSVHANDLER class` handles automatic csv loading and store important data structures
 ```python
-class DATALOADER(GRAPHDATA):
+class CSVHANDLER:
     def __init__(self, relations_path):
         self.relations_path = relations_path
         self.generate_relations_path = relations_path
         self.graphdata = self.prepare_graph()
 ```
-The following are methods callable within the `DATALOADER` class :
+The following are methods callable within the `CSVHANDLER` class :
 
 ## `prepare_adj_list(relations_path: str)` returns `name_to_id`, `id_to_name`, and `ADJ_list`
 The `prepare_adj_list` function takes the path to the `relations.csv` file as input and returns `GRAPHDATA` as a package to contain the following data structures :
@@ -32,11 +32,11 @@ The `prepare_adj_list` function takes the path to the `relations.csv` file as in
 2. `id_to_name`: a dictionary that maps node integer index back to their corresponding names.
 3. `nodecount`: an integer of the total number of unique nodes in the graph. 
 4. `nodenames`: a list of strings of the unique node names in the graph.
-5. `ADJ_type`: a string that indicates the type of adjacency representation used (e.g., "LIST" or "MTRX").
-6. `ADJ_obj`: the actual adjacency representation of the graph, which can be either an adjacency list or an adjacency matrix.
+5. `ADJ_list`: a list of list of tuples for the adjacency list the program will use.
+6. `max_str_len`: an integer of the maximum string length of the node names in the graph, used for formatting the output.
 
-## The design choice to enable switching between adjacency list and adjacency matrix representations
-For a **sparse graph** with a large number of nodes and relatively few edges, an adjacency list is more memory efficient and faster for certain operations. For a **dense graph** with many edges, an adjacency matrix can be more efficient for certain operations, such as checking for the O(1) access time and lookups. By allowing the program to decide between these two representations, the program can optimize the performance of graph algorithms based on the specific characteristics of the graph being analyzed.
+## The design choice to settle on using adjacency lists over adjacency matrices
+A final verdict is made to primarily work with adjacency lists because the dijkstra algorithm implemented in this project is ultimately more efficient with adjacency lists regardless a sparse or dense graph. **A legacy version where there are separate implementations of the program working with either list or matrices is available in the `legacy_list_matrix` branch in this github repository**
 
 ## `ADJ_list` visualization not indexed
 ```python

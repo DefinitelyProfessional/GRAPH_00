@@ -8,8 +8,8 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
     def __init__(self, graphdata: GRAPHDATA):
         super().__init__(graphdata)
         self._INF = float("inf") # a preference to define infinity
+        self.MST_edge_set = set() # to store the MST edge set IF the user wants to build one
     # ========================================================================================================
-    def get_neighbors(self, current_node: int): raise NotImplementedError # LIST MTRX implementation differ
     def shortest_path(self, start: str, end: str):
         """
         ## The simplest most efficient dijkstra implemntation in python
@@ -30,9 +30,6 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         
         # Priority Queue of nodes to visit : (current_wgh_sum, node_id)
         visit_queue = [(0, start_node)]
-        # store a defined method from the child node
-        # this prevents repeated self method lookups
-        get_neighbors = self.get_neighbors
         # Visit every node that needs to be explored
         while visit_queue:
             # Pop the node with the shortest known wgh_sum !
@@ -49,7 +46,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
             
             # Explore ALL "neighbors", if no path exists from start to end
             # The visit_queue will be exhausted and this loop stops
-            for neighbor, wgh in get_neighbors(current_node):
+            for neighbor, wgh in self.ADJ_list[current_node]:
                 if visited[neighbor]: continue # SKIP
                 
                 new_wgh_sum = current_wgh_sum + wgh
@@ -80,7 +77,6 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         
         return wgh_sum[end_node], path
     # ========================================================================================================
-    def search_edge(self, src, dst): raise NotImplementedError # LIST MTRX implementation differ
     def routing_engine(self, start, end):
         """
         ## To manage the shortest path function usage
@@ -97,57 +93,12 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
             print(f"{self.id_to_name[src]:<{self.max_str_len}} -> {self.id_to_name[dst]:<{self.max_str_len}} : {wgh}")
         # finally, show results
         print(f"Total Distance : {total_wgh_sum}")
-    
-
-
-class GRAPHLIST(GRAPHSTRUCTURE):
-    """
-    ## class optimized for sparse graphs
-    """
-    def __init__(self, graphdata: GRAPHDATA): super().__init__(graphdata)
-    # ========================================================================================================     
-    def get_neighbors(self, current_node: int): # optimized for shortest_path that works with ADJ_list
-        return self.ADJ_obj[current_node] # notice how it is more simple with ADJ_list objects
     # ========================================================================================================
-    def search_edge(self, src, dst):
+    # TODO implement this woy, note the data structures this program uses, such as teh ADJ_list
+    def build_MST(self):
         """
-        ## Something to make life easier, searches for existing edges in O(n) for ADJ_list
+        ## Generate an MST out of the specified relations
+        return a new edge set of the MST relations
         """
-        try: # let errors occur without causing a full crash
-            for destinations, wgh in self.ADJ_obj[src]:
-                if destinations != dst: continue
-                return src, dst, wgh # match found !!
-            print(f"{src}, {dst} NOT FOUND")
-        except Exception as cursed: print(cursed)
-        return None, None, None # false condition if it were to reach here ...
-    # ========================================================================================================
-    def build_MST():
-        # TODO woy implement MST with ADJ_list
-        return
-
-
-
-class GRAPHMTRX(GRAPHSTRUCTURE):
-    """
-    ## class optimized for dense graphs
-    """
-    def __init__(self, graphdata: GRAPHDATA): super().__init__(graphdata)
-    # ========================================================================================================
-    def get_neighbors(self, current_node: int): # optimized for shortest_path that works with ADJ_mtrx
-        return [(neighbor, weight) for neighbor, weight in enumerate(self.ADJ_obj[current_node]) if weight != self._INF]
-    # ========================================================================================================
-    def search_edge(self, src, dst):
-        """
-        ## Something to make life easier, searches for existing edges in O(1) for ADJ_mtrx
-        """
-        try: # let errors occur without causing a full crash
-            wgh = self.ADJ_obj[src][dst]
-            if wgh != self._INF:
-                return src, dst, wgh # match found !!
-            else: print(f"{src}, {dst} NOT FOUND")
-        except Exception as cursed: print(cursed)
-        return None, None, None # false condition if it were to reach here ...
-    # ========================================================================================================
-    def build_MST():
-        # TODO woy implement MST with ADJ_mtrx
-        return
+        MST_edges = set()
+        return MST_edges

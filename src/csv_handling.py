@@ -3,13 +3,15 @@
 by Stephen Matthews
 """
 from graphdataclass import GRAPHDATA
+from pathlib import Path
 import csv
 import random
 
-class DATALOADER:
-    def __init__(self, relations_path):
+class CSVHANDLER:
+    def __init__(self, relations_path:Path):
         self.relations_path = relations_path
-        self.generate_relations_path = relations_path
+        self.new_relations_path = relations_path.with_name(
+            f"{relations_path.stem}new_{relations_path.suffix}")
         self.graphdata = self.prepare_graph()
 
     # ========================================================================================================
@@ -38,16 +40,27 @@ class DATALOADER:
         # Explanation for how this ADJ_list works is documented in code_breakdown\csv_handling.md
         nodecount = len(nodes)
 
-        if len(edges) <= ((nodecount*(nodecount-1))*3)//20: # ADJ_list will be more efficient
-            ADJ_list = [[] for _ in range(nodecount)]
-            for src, dst, wgh in edges: # note edges is alredy a unique set
-                ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
-            return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), "LIST", ADJ_list, max_str_len)
-        else: # ADJ_mtrx will be more efficient
-            ADJ_mtrx = [[float("inf")]*nodecount for _ in range(nodecount)]
-            for src, dst, wgh in edges: # note edges is alredy a unique set
-                ADJ_mtrx[name_to_id[src]][name_to_id[dst]] = wgh
-            return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), "MTRX", ADJ_mtrx, max_str_len)
+        # Generate the Adjacency List the program will use for data processing
+        ADJ_list = [[] for _ in range(nodecount)]
+        for src, dst, wgh in edges: # note edges is alredy a unique set
+            ADJ_list[name_to_id[src]].append((name_to_id[dst], wgh))
+        return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), ADJ_list, max_str_len)
+
+    # ========================================================================================================
+    def write_new_relations(self, relations_path="", payload_edges=set()):
+        """
+        ## Write a new edge set to self.new_relations_path,
+        i.e. used by MST to print the new generated MST relations
+        """
+        # if a relations_path is specified it will write into the specified new relations path
+        if relations_path : self.new_relations_path = relations_path
+        # there must be a non empty set of new edges to be written
+        if not payload_edges: print("Empty Edge set, write cancelled."); return
+        # write the new edges set into the new relations file path
+        with open(self.new_relations_path, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, ); writer.writerow(['src', 'dst', 'wgh']) # write csv header
+            writer.writerows(payload_edges)
+        print(f"Specified edge set successfuly writen to :\n{self.new_relations_path}")
 
     # ========================================================================================================
     def generate_relations_csv(self, directional=True, nodecount=10, num_edges=20, min_weight=1, max_weight=100):
@@ -104,5 +117,5 @@ if __name__ == "__main__":
     RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
     if input("Generate random relations ? (y/n)") in "Yy":
-        LOADER = DATALOADER(RELATIONS_FILE_PATH)
+        LOADER = CSVHANDLER(RELATIONS_FILE_PATH)
         LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=1000000, min_weight=1, max_weight=1000)

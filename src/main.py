@@ -7,12 +7,12 @@ ROOT_DIR = Path(__file__).resolve().parents[1] # 0:src, 1:GRAPH_00
 RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
 
 # external py files to decentralize definitions
-from csv_handling import DATALOADER
-from algorithms import GRAPHLIST, GRAPHMTRX
+from csv_handling import CSVHANDLER
+from algorithms import GRAPHSTRUCTURE
 
 # read the relations file and setup the program
-DATA = DATALOADER(RELATIONS_FILE_PATH)
-GRAPH = GRAPHLIST(DATA.graphdata) if DATA.graphdata.ADJ_type == "LIST" else GRAPHMTRX(DATA.graphdata)
+DATA = CSVHANDLER(RELATIONS_FILE_PATH)
+GRAPH = GRAPHSTRUCTURE(DATA.graphdata)
 
 # MAIN PROGRAM EXECUTION
 if __name__ == "__main__":
@@ -26,7 +26,6 @@ if __name__ == "__main__":
     #         case "2":
     #             pass
 
-    print(GRAPH.ADJ_type)
     # GRAPH.display_adjacency_list()
     GRAPH.display_nodes()
     start_node = input("Start : ")
