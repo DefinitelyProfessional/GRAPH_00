@@ -20,7 +20,7 @@ Note that negative wgh_sum are allowed but not accounted for in the current impl
 ```python
 class CSVHANDLER:
     def __init__(self, relations_path):
-        self.relations_path = relations_path
+        self.input_path = relations_path
         self.generate_relations_path = relations_path
         self.graphdata = self.prepare_graph()
 ```

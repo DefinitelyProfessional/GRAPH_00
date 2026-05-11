@@ -13,6 +13,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
     def shortest_path(self, start: str, end: str):
         """
         ## The simplest most efficient dijkstra implemntation in python
+        By Stephen Matthews
         """
         if start not in self.name_to_id or end not in self.name_to_id:
             print("Non-Existant Nodes !!!"); return None, []

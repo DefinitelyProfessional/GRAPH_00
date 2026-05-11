@@ -8,11 +8,21 @@ import csv
 import random
 
 class CSVHANDLER:
-    def __init__(self, relations_path:Path):
-        self.relations_path = relations_path
-        self.new_relations_path = relations_path.with_name(
-            f"{relations_path.stem}new_{relations_path.suffix}")
-        self.graphdata = self.prepare_graph()
+    def __init__(self, data_directory:Path, input_file:str, output_file:str=None):
+        self.data_directory = Path(data_directory) # Ensure data_directory is a Path object
+        self.input_path = self.data_directory / input_file # setup the input file path
+
+        # Verify the input file exists before processing
+        if not self.input_path.exists():
+            raise FileNotFoundError(f"Missing relations file at: {self.input_path}")
+
+        if output_file: self.output_path = self.data_directory / output_file # setup output
+        else: self.output_path = self.input_path.with_stem(f"{self.input_path.stem}_new")
+
+        print(f"Input  Filepath at {self.input_path}")
+        print(f"Output Filepath at {self.output_path}")
+        
+        self.graphdata = self.prepare_graph() # for storing data read by prepare_graph
 
     # ========================================================================================================
     def prepare_graph(self):
@@ -23,7 +33,7 @@ class CSVHANDLER:
         edges = set()
         # READ THE CSV, Intentionally no try except is used here because any error would
         # make the program unable to continue run anyways, so let it be a blocking error
-        with open(self.relations_path, mode='r', newline='', encoding='utf-8') as file:
+        with open(self.input_path, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file); next(reader) # unused header
             for src, dst, wgh in reader:
                 nodes.add(src); nodes.add(dst) # collect the unique nodes
@@ -47,27 +57,30 @@ class CSVHANDLER:
         return GRAPHDATA(name_to_id, id_to_name, nodecount, name_to_id.keys(), ADJ_list, max_str_len)
 
     # ========================================================================================================
-    def write_new_relations(self, relations_path="", payload_edges=set()):
+    def write_new_relations(self, new_path="", payload_edges=set()):
         """
-        ## Write a new edge set to self.new_relations_path,
+        ## Write a new edge set to self.output_path,
         i.e. used by MST to print the new generated MST relations
         """
         # if a relations_path is specified it will write into the specified new relations path
-        if relations_path : self.new_relations_path = relations_path
+        if new_path : self.output_path = self.data_directory / new_path
         # there must be a non empty set of new edges to be written
         if not payload_edges: print("Empty Edge set, write cancelled."); return
         # write the new edges set into the new relations file path
-        with open(self.new_relations_path, mode='w', newline='', encoding='utf-8') as file:
+        with open(self.output_path, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file, ); writer.writerow(['src', 'dst', 'wgh']) # write csv header
             writer.writerows(payload_edges)
-        print(f"Specified edge set successfuly writen to :\n{self.new_relations_path}")
+        print(f"Specified edge set successfuly writen to :\n{self.output_path}")
 
     # ========================================================================================================
-    def generate_relations_csv(self, directional=True, nodecount=10, num_edges=20, min_weight=1, max_weight=100):
+    def generate_relations_csv(self, new_file_path='', directional=True, nodecount=26**2+26, num_edges=100000, min_weight=1, max_weight=1000):
         """
         ## Self explanatory ahh function.
         random and exactly the specified amount of nodes & edges.
         """
+        # Setup the new_relations_path
+        if new_file_path: self.output_path = self.data_directory / new_file_path
+
         # The max possible edges in a directed graph is V * (V - 1) that "-1" being no self loops allowed
         # As for a bidirectional graph it would be half of a directional graph cuz of going in 2 ways.
         max_possible_edges = nodecount * (nodecount - 1) if directional else (nodecount * (nodecount - 1)) // 2
@@ -93,8 +106,8 @@ class CSVHANDLER:
             # edges being a set already ensures no dupes exist
             edges.add((src_idx, dst_idx) if directional else tuple(sorted((src_idx, dst_idx))))
 
-        try: # WRITE TO CSV WHILE ALSO GENERATING THE WEIGHTS   
-            with self.generate_relations_path.open('w', newline='', encoding='utf-8') as file:
+        try: # WRITE TO CSV WHILE ALSO GENERATING THE WEIGHTS
+            with open(self.output_path, 'w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file) # simple writer
                 writer.writerow(["src", "dst", "wgh"]) # the esteemed header
                 if directional:
@@ -114,8 +127,9 @@ if __name__ == "__main__":
     # setup path connections to required files
     from pathlib import Path # This is better than plain path strings
     ROOT_DIR = Path(__file__).resolve().parents[1] # 0:src, 1:GRAPH_00 
-    RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
+    DATA_DIRECTORY = ROOT_DIR / "data"
 
     if input("Generate random relations ? (y/n)") in "Yy":
-        LOADER = CSVHANDLER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=1000000, min_weight=1, max_weight=1000)
+        LOADER = CSVHANDLER(DATA_DIRECTORY, "relations.csv")
+        LOADER.generate_relations_csv(new_file_path="directed_relations.csv",directional=True)
+        LOADER.generate_relations_csv(new_file_path="undirected_relations.csv",directional=False)
