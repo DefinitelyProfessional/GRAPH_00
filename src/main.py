@@ -34,3 +34,5 @@ if __name__ == "__main__":
     start_node = input("Start : ")
     end_node = input("End : ")
     GRAPH.routing_engine(start_node, end_node)
+    GRAPH.build_MST()
+    
