@@ -5,8 +5,8 @@ THIS IS MAIN TO HANDLE COORDINATION AND PROGRAM FLOW
 from pathlib import Path # This is better than plain path strings
 ROOT_DIR = Path(__file__).resolve().parents[1] # 0:src, 1:GRAPH_00 
 DATA_DIRECTORY = ROOT_DIR / "data" # Define the data directory where INPUT_FILE_NAME is located
-# INPUT_FILE_NAME = "relations.csv" # Specify the exact file name of the input relations
-INPUT_FILE_NAME = "directed_relations.csv" # Specify the exact file name of the input relations
+INPUT_FILE_NAME = "relations.csv" # Specify the exact file name of the input relations
+# INPUT_FILE_NAME = "directed_relations.csv" # Specify the exact file name of the input relations
 # INPUT_FILE_NAME = "undirected_relations.csv" # Specify the exact file name of the input relations
 
 # external py files to decentralize definitions
@@ -31,8 +31,8 @@ if __name__ == "__main__":
 
     # GRAPH.display_adjacency_list()
     GRAPH.display_nodes()
-    start_node = input("Start : ")
-    end_node = input("End : ")
-    GRAPH.routing_engine(start_node, end_node)
-    GRAPH.build_MST()
-    
+    # start_node = input("Start : ")
+    # end_node = input("End : ")
+    # GRAPH.routing_engine(start_node, end_node)
+    MST_EDGE_SET = GRAPH.build_MST()
+    DATA.write_new_relations("MST_relations.csv", payload_edges=MST_EDGE_SET)

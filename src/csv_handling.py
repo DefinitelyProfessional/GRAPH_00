@@ -131,5 +131,6 @@ if __name__ == "__main__":
 
     if input("Generate random relations ? (y/n)") in "Yy":
         LOADER = CSVHANDLER(DATA_DIRECTORY, "relations.csv")
-        LOADER.generate_relations_csv(new_file_path="directed_relations.csv",directional=True)
-        LOADER.generate_relations_csv(new_file_path="undirected_relations.csv",directional=False)
+        LOADER.generate_relations_csv(new_file_path="relations.csv",directional=True)
+        # LOADER.generate_relations_csv(new_file_path="directed_relations.csv",directional=True)
+        # LOADER.generate_relations_csv(new_file_path="undirected_relations.csv",directional=False)
