@@ -3,6 +3,8 @@
 """
 from graphdataclass import GRAPHDATA, AUTOLOADGRAPHDATA
 from heapq import heappop as pop, heappush as push # Make use of efficient priority queue
+from pathlib import Path
+from csv_handling import CSVHANDLER
 
 class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
     def __init__(self, graphdata: GRAPHDATA):
@@ -46,7 +48,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
             
             # Explore ALL "neighbors", if no path exists from start to end
             # The visit_queue will be exhausted and this loop stops
-            for neighbor, wgh in self.ADJ_list[current_node]:
+            for neighbor, wgh in self.ADJ_list[current_node]: 
                 if visited[neighbor]: continue # SKIP
                 
                 new_wgh_sum = current_wgh_sum + wgh
@@ -95,10 +97,39 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         print(f"Total Distance : {total_wgh_sum}")
     # ========================================================================================================
     # TODO implement this woy, note the data structures this program uses, such as teh ADJ_list
+
     def build_MST(self):
-        """
-        ## Generate an MST out of the specified relations
-        return a new edge set of the MST relations
-        """
-        MST_edges = set()
-        return MST_edges
+        if self.nodecount == 0: # Kalau graph kosong MSTnya tidak ada, return set kosong
+            return set()
+
+        self.MST_edge_set = set() # Buat set kosong untuk menyimpan edge-edge MST
+        visited = [False] * self.nodecount # Buat list visited untuk menandai node yang sudah di visit
+
+        for start in range(self.nodecount): # Memastikan semua connected components dibuat MST 
+            if visited[start]: # Kalau node sudah masuk MST, skip
+                continue
+            
+            visited[start] = True # Node yang belum dikunjungi menjadi node awal
+            
+            edge_queue = []
+            for neighbor, wgh in self.ADJ_list[start]: # Masukkan setiap edge dari node awal ke heap
+                push(edge_queue, (wgh, start, neighbor))
+
+            while edge_queue: # Selama masih ada kandidat edge
+                wgh, src, dst = pop(edge_queue) # Ambil edge dengan bobot terkecil
+                if visited[dst]: # Kalau node tujuan sudah ada di MST, skip supaya tidak siklik
+                    continue
+
+                visited[dst] = True # Node baru masuk MST
+                self.MST_edge_set.add((src, dst, wgh)) # Simpan edge ke MST 
+
+                for neighbor, next_wgh in self.ADJ_list[dst]: # Eksplor semua edge node baru
+                    if visited[neighbor]: # Kalau neighbor sudah ada di MST, skip 
+                        continue
+                    push(edge_queue, (next_wgh, dst, neighbor)) # Masukkan edge baru ke heap
+
+        return self.MST_edge_set # Return semua edge MST, kalau ada graph disconnected jadi Minimum Spanning Forest
+
+
+
+        

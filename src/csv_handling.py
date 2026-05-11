@@ -11,9 +11,8 @@ class CSVHANDLER:
     def __init__(self, relations_path:Path):
         self.relations_path = relations_path
         self.new_relations_path = relations_path.with_name(
-            f"{relations_path.stem}new_{relations_path.suffix}")
+            f"{relations_path.stem}_new{relations_path.suffix}")
         self.graphdata = self.prepare_graph()
-
     # ========================================================================================================
     def prepare_graph(self):
         """
@@ -94,7 +93,7 @@ class CSVHANDLER:
             edges.add((src_idx, dst_idx) if directional else tuple(sorted((src_idx, dst_idx))))
 
         try: # WRITE TO CSV WHILE ALSO GENERATING THE WEIGHTS   
-            with self.generate_relations_path.open('w', newline='', encoding='utf-8') as file:
+            with open(self.new_relations_path, 'w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file) # simple writer
                 writer.writerow(["src", "dst", "wgh"]) # the esteemed header
                 if directional:
@@ -114,8 +113,12 @@ if __name__ == "__main__":
     # setup path connections to required files
     from pathlib import Path # This is better than plain path strings
     ROOT_DIR = Path(__file__).resolve().parents[1] # 0:src, 1:GRAPH_00 
-    RELATIONS_FILE_PATH = ROOT_DIR / "data" / "relations.csv"
+    UNDIRECTED_FILE_PATH = ROOT_DIR / "data" / "undirected_relations.csv"
+    DIRECTED_FILE_PATH = ROOT_DIR / "data" / "directed_relations.csv"
 
     if input("Generate random relations ? (y/n)") in "Yy":
-        LOADER = CSVHANDLER(RELATIONS_FILE_PATH)
-        LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=1000000, min_weight=1, max_weight=1000)
+        LOADER = CSVHANDLER(UNDIRECTED_FILE_PATH)
+        LOADER.generate_relations_csv(directional=False, nodecount=26**2+26, num_edges=1000000, min_weight=1, max_weight=1000)
+
+        # LOADER = CSVHANDLER(DIRECTED_FILE_PATH)
+        # LOADER.generate_relations_csv(directional=True, nodecount=26**2+26, num_edges=1000000, min_weight=1, max_weight=1000)
