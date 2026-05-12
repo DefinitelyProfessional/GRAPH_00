@@ -20,9 +20,6 @@ class CSVHANDLER:
         if output_file: self.output_path = self.data_directory / output_file # setup output
         else: self.output_path = self.input_path.with_stem(f"{self.input_path.stem}_new")
 
-        print(f"Input  Filepath at {self.input_path}")
-        print(f"Output Filepath at {self.output_path}")
-
         self.graphdata = self.prepare_graph() # for storing data read by prepare_graph
 
     # ========================================================================================================
@@ -70,6 +67,7 @@ class CSVHANDLER:
     def _unique_output(self, output_path: Path):
         """
         ## Ensure the file outputs are unique and don't overlap existing files
+        Contribution by Nehemy
         """
         if not output_path.exists(): return output_path # if output is still unique
         enum = 1
@@ -85,18 +83,19 @@ class CSVHANDLER:
         i.e. used by MST to print the new generated MST relations
         """
         # if a relations_path is specified it will write into the specified new relations path
-        if new_path: self.output_path = self.data_directory / new_path
+        if new_path: 
+            self.output_path = self.data_directory / new_path
+            self.output_path = self.output_path.with_suffix(".csv")
         # there must be a non empty set of new edges to be written
         if not payload_edges:
-            print("Empty Edge set, write cancelled.")
-            return
+            return "Empty Edge set, write cancelled."
         # write the new edges set into the new relations file path
         self.output_path = self._unique_output(self.output_path)
         with open(self.output_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["src", "dst", "wgh"])  # write csv header
             writer.writerows(payload_edges)
-        print(f"Specified edge set successfuly writen to :\n{self.output_path}")
+        return "" # represent no errors occurred
 
     # ========================================================================================================
     def generate_relations_csv(

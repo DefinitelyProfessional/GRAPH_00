@@ -7,7 +7,7 @@ class GRAPHDATA:
                  name_to_id: dict,
                  id_to_name: dict,
                  nodecount: int,
-                 nodenames: set,
+                 nodenames: list,
                  ADJ_list: list,
                  max_str_len: int):
         self.name_to_id = name_to_id # to translate name strings to node_id/indeces
@@ -26,24 +26,16 @@ class AUTOLOADGRAPHDATA(GRAPHDATA):
             graphdata.nodenames,
             graphdata.ADJ_list,
             graphdata.max_str_len)
-    # ========================================================================================================
-    def display_adjacency_list(self):
-        """
-        ## a dev tool to help visualize the adjacency list, if the program decided to use MTRX its already too big to visualize in the terminal.
-        """
-        map_ = self.id_to_name # prevent repeated self lookups
-        for src, relations in enumerate(self.ADJ_list):
-            print(f"{map_[src]} : ", end="")
-            for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
-            print()
-    # ========================================================================================================
-    def display_nodes(self, width=20):
-        """
-        ## To make life easier, uses data from CSVLOADER
-        """
-        for idx, name in enumerate(self.nodenames, start=1):
-            print(f"{name:<{self.max_str_len}}", end=" | " if idx % width != 0 else "\n")
-        print()
+    # # ========================================================================================================
+    # def display_adjacency_list(self):
+    #     """
+    #     ## a dev tool to help visualize the adjacency list, if the program decided to use MTRX its already too big to visualize in the terminal.
+    #     """
+    #     map_ = self.id_to_name # prevent repeated self lookups
+    #     for src, relations in enumerate(self.ADJ_list):
+    #         print(f"{map_[src]} : ", end="")
+    #         for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
+    #         print()
     # ========================================================================================================
     def search_edge(self, src, dst):
         """

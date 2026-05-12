@@ -16,7 +16,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         By Stephen Matthews
         """
         if start not in self.name_to_id or end not in self.name_to_id:
-            print("Non-Existant Nodes !!!"); return None, []
+            return None, [], "Non-Existant Nodes !!!"
             
         # Convert to node id's being integer indexes !
         start_node = self.name_to_id[start]
@@ -63,7 +63,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         # If the end node wgh_sum ends up to still be INF that
         # indicates there is no path from start to end, how sad
         if wgh_sum[end_node] == self._INF:
-            print(f"No path found between {start} and {end}."); return None, []
+            return None, [], f"No path found between {start} and {end}."
         
         # refer to code_breakdown\dijkstra.ipynb for explanations
         path = []
@@ -76,28 +76,34 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
         # Flip it to read from Start -> End
         path.reverse()
         
-        return wgh_sum[end_node], path
+        return wgh_sum[end_node], path, "Shortest Path Found !"
     # ========================================================================================================
     def routing_engine(self, start, end):
         """
         ## To manage the shortest path function usage
+        By Stephen Matthews
         """
         # Conduct the shortest path algortihm
-        total_wgh_sum, path_ids = self.shortest_path(start, end)
+        total_wgh_sum, path_ids, status_str = self.shortest_path(start, end)
         # evaluate results
-        if (total_wgh_sum, path_ids) == (None, []): return
+        if (total_wgh_sum, path_ids) == (None, []): return 1, status_str, None, None
         # display the series of path traversals
+        traversal_string = []
+
         search_edge = self.search_edge # store method to prevent repeated self lookups
         for i in range(1, len(path_ids)):
             src, dst, wgh = search_edge(path_ids[i-1], path_ids[i])
             if (src, dst, wgh) == (None, None, None): continue # skip errors
-            print(f"{self.id_to_name[src]:<{self.max_str_len}} -> {self.id_to_name[dst]:<{self.max_str_len}} : {wgh}")
-        # finally, show results
-        print(f"Total Distance : {total_wgh_sum}")
+            traversal_string.append(
+                f"{self.id_to_name[src]:<{self.max_str_len}} -> {self.id_to_name[dst]:<{self.max_str_len}} : {wgh}")
+        # return results for UI to render
+        return 0, status_str, traversal_string, total_wgh_sum
+    
     # ========================================================================================================
     def build_MST(self):
         """
-        build MST out of the adjacency list with Prim's Algorithm
+        ## build MST out of the adjacency list with Prim's Algorithm
+        By Neil Yapson and Joshua Christopher
         """
         if self.nodecount == 0: # Kalau graph kosong MSTnya tidak ada, return set kosong
             return set()
