@@ -15,7 +15,7 @@ INPUT_FILE_NAME = "" # to be defined by program
 # Initialize UI manager
 UI = UI_MANAGER()
 
-def update_graph_session(ui_, directory):
+def update_graph_session(ui_:UI_MANAGER, directory):
     """Handle file selection and object re-initialization."""
     selected_file = ui_.select_file_from_directory(directory)
     # if 
@@ -26,7 +26,7 @@ def update_graph_session(ui_, directory):
         
         ui_.set_content("FILE LOADED !", f"Active File in use : [bold cyan]{selected_file}[/]", color="green")
         ui_.set_status(f"Loaded {selected_file} successfully.", "green")
-        
+        ui_.set_file_in_use(selected_file)
         return new_handler, new_graph, selected_file
     # indicate a failed update
     return None, None, None
@@ -43,6 +43,7 @@ if __name__ == "__main__":
         # Render the current UI state and wait for a command        
         match UI.prompt("SELECT ACTION", choices=["0", "1", "2", "3", "4", "5"], default="1"):
             case "0": # EXIT PROGRAM
+                if UI.prompt("Exit Confirmation (y/n)") not in "Yy": continue
                 UI.clear_terminal() # Clear screen one last time and exit cleanly
                 UI.console.print("[bold cyan]End of Session. Thank you, goodbye![/bold cyan]")
                 break
@@ -85,7 +86,7 @@ if __name__ == "__main__":
                 if output_file: 
                     HANDLER.write_new_relations(output_file, payload_edges=MST_EDGE_SET)
                     UI.set_status(f"MST saved to {output_file}", "green")
-                else: UI.set_status(f"Empty file, save cancelled.", "yellow")
+                else: UI.set_status(f"Empty file name, save cancelled.", "yellow")
                 
             case "5": # CHANGE FILE
                 NEW_H, NEW_G, NEW_NAME = update_graph_session(UI, DATA_DIRECTORY)

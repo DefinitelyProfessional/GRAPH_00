@@ -26,16 +26,6 @@ class AUTOLOADGRAPHDATA(GRAPHDATA):
             graphdata.nodenames,
             graphdata.ADJ_list,
             graphdata.max_str_len)
-    # # ========================================================================================================
-    # def display_adjacency_list(self):
-    #     """
-    #     ## a dev tool to help visualize the adjacency list, if the program decided to use MTRX its already too big to visualize in the terminal.
-    #     """
-    #     map_ = self.id_to_name # prevent repeated self lookups
-    #     for src, relations in enumerate(self.ADJ_list):
-    #         print(f"{map_[src]} : ", end="")
-    #         for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
-    #         print()
     # ========================================================================================================
     def search_edge(self, src, dst):
         """
@@ -48,3 +38,13 @@ class AUTOLOADGRAPHDATA(GRAPHDATA):
             print(f"{src}, {dst} NOT FOUND")
         except Exception as cursed: print(cursed)
         return None, None, None # false condition if it were to reach here ...
+    # # ========================================================================================================
+    # def display_adjacency_list(self):
+    #     """
+    #     ## a dev tool to help visualize the adjacency list, if the program decided to use MTRX its already too big to visualize in the terminal.
+    #     """
+    #     map_ = self.id_to_name # prevent repeated self lookups
+    #     for src, relations in enumerate(self.ADJ_list):
+    #         print(f"{map_[src]} : ", end="")
+    #         for dst, wgh in relations: print(f"({map_[dst]}, {wgh})", end=", ")
+    #         print()

@@ -1,3 +1,6 @@
+"""
+# Terminal UI utilities
+"""
 from rich import box
 from rich.layout import Layout
 from rich.console import Console
@@ -26,14 +29,21 @@ class UI_MANAGER:
             Layout(name="sidebar", ratio=1, minimum_size=25),
             Layout(name="content", ratio=4)
         )
+        self.layout["sidebar"].split_column(
+            Layout(name="file_in_use", size=3),
+            Layout(name="file_explorer", ratio=3),
+            Layout(name="action_menu", ratio=2)
+        )
 
         # Pre-build static elements
         self.menu_table = self._build_menu_table()
         self.layout["header"].update(self._build_banner())
-        self.layout["sidebar"].update(Panel(self.menu_table, title="[bold cyan]Action Menu", border_style="cyan"))
+        self.layout["action_menu"].update(Panel(self.menu_table, title="[bold cyan]Action Menu", border_style="cyan"))
         
         # Initial states
         self.set_content("Welcome", Text("Select an option from the menu to begin.", style="dim"))
+        self.set_file_explorer("Loading ...")
+        self.set_file_in_use("Please Select a csv file")
         self.set_status("System ready.", "green")
 
 
@@ -52,6 +62,7 @@ class UI_MANAGER:
             return None
 
         # Build a display table for the 'content' window
+        small_table = Table(box=box.SIMPLE, show_header=False, expand=True)
         file_table = Table(box=box.SIMPLE, show_header=True, expand=True)
         file_table.add_column("No", justify="center", style="cyan", width=3)
         file_table.add_column("Available Data Files", style="white")
@@ -60,12 +71,14 @@ class UI_MANAGER:
         for i, filename in enumerate(files, 1):
             valid_choices.append(str(i))
             file_table.add_row(str(i), filename)
+            small_table.add_row(filename)
 
         # Update UI state
         self.set_content("File Selection", file_table, color="yellow")
-        self.set_status("Awaiting file selection...", "yellow")
+        self.set_file_explorer(small_table)
+        self.set_status("Awaiting file selection ...", "yellow")
         
-        # Get user selected file        
+        # Get user selected file
         return files[int(self.prompt("Enter file number", choices=valid_choices, default="1")) - 1]
 
     def clear_terminal(self):
@@ -108,6 +121,14 @@ class UI_MANAGER:
         table.add_row("5", "Change input file")
         table.add_row("0", "Exit")
         return table
+
+    def set_file_in_use(self, renderable):
+        """Set the file in use to show whats being worked on"""
+        self.layout["file_in_use"].update(Panel(renderable, title=f"[bold]File In Use", border_style="magenta"))
+    
+    def set_file_explorer(self, renderable):
+        """Set the file explorer to show contents"""
+        self.layout["file_explorer"].update(Panel(renderable, title=f"[bold]Available Files", border_style="yellow"))
 
     def set_content(self, title: str, renderable, color="blue"):
         """Swaps out the main viewing area content"""
