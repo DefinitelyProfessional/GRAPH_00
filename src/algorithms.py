@@ -131,6 +131,7 @@ class GRAPHSTRUCTURE(AUTOLOADGRAPHDATA):
 
                 visited[dst] = True # Node baru masuk MST
                 self.MST_edge_set.add((id_to_name[src], id_to_name[dst], wgh)) # Simpan edge ke MST 
+                self.MST_edge_set.add((id_to_name[dst], id_to_name[src], wgh)) # Simpan edge ke MST 
 
                 for neighbor, next_wgh in self.ADJ_list[dst]: # Eksplor semua edge node baru
                     if visited[neighbor]: # Kalau neighbor sudah ada di MST, skip 
